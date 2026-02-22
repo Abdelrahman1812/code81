@@ -1,0 +1,51 @@
+@startuml
+title Namespace Strategy with Helm Packaging
+
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor #888888
+  RoundCorner 12
+}
+skinparam node {
+  BackgroundColor #f9f9f9
+  BorderColor #555555
+}
+skinparam packageStyle rectangle
+
+node "Kubernetes Cluster" as cluster {
+  package "frontend (namespace)\nLiferay + Other FE Apps" as ns_frontend <<Namespace>> {
+    component "Liferay Portal" as liferay
+    component "Other FE App(s)" as otherfe
+  }
+
+  package "business-1 (namespace)" as ns_business1 <<Namespace>> {
+    component "Business Service 1"
+    database "DB (optional)" as db1
+  }
+
+  package "business-2 (namespace)" as ns_business2 <<Namespace>> {
+    component "Business Service 2"
+    database "DB (optional)" as db2
+  }
+
+  package "business-3 (namespace)" as ns_business3 <<Namespace>> {
+    component "Business Service 3"
+    database "DB (optional)" as db3
+  }
+}
+
+component "Helm Charts\nReusable Packages" as helm <<Helm>>
+helm --> ns_business1 : installs / updates
+helm --> ns_business2 : installs / updates
+helm --> ns_business3 : installs / updates
+
+' Optional arrows
+ns_frontend ..> ns_business1 : HTTPS/API
+ns_frontend ..> ns_business2 : HTTPS/API
+
+legend right
+  == Conventions ==
+  <<Namespace>>  Kubernetes namespace (logical isolation)
+  <<Helm>>       Helm chart used to package & deploy business namespaces
+endlegend
+@enduml
